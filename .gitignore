@@ -2,10 +2,11 @@
 node_modules/
 **/node_modules/
 
-
-# If you use yarn or pnpm
-yarn.lock
-pnpm-lock.yaml
+# Lock files (optional - uncomment if you want to ignore them)
+# package-lock.json
+# If you use yarn or pnpm, uncomment below
+# yarn.lock
+# pnpm-lock.yaml
 
 # Build output / generated files
 build/

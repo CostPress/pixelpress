@@ -37,11 +37,12 @@ jobs:
       - name: Install dependencies
         working-directory: docs
         run: |
-          if [ ! -f docs/package-lock.json ]; then
-            echo "package-lock.json not found in docs directory. Please ensure it's committed.";
-            exit 1;
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "package-lock.json not found, using npm install instead"
+            npm install
           fi
-          npm ci
 
       - name: Build documentation site
         working-directory: docs
