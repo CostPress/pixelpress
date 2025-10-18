@@ -119,19 +119,43 @@ a {
   display: none;
 }
 
-/* Adjust content to use full width without left sidebar */
+/* Center and expand content area */
 .md-content {
   margin-left: 0;
+  max-width: none;
 }
 
-/* Adjust main container */
+/* Adjust main container for better content distribution */
 .md-main__inner {
   margin-left: 0;
+  max-width: none;
 }
 
-/* Ensure table of contents stays on the right */
-.md-sidebar--secondary {
-  right: 0;
+/* Make content and sidebar use available space efficiently */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--secondary {
+    width: 15rem;
+  }
+  
+  .md-content__inner {
+    margin-right: 17rem;
+    margin-left: 2rem;
+    max-width: 55rem;
+  }
+  
+  .md-grid {
+    max-width: none;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+/* For medium screens */
+@media screen and (max-width: 76.234375em) {
+  .md-content__inner {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  }
 }
 
 /* Ensure TOC is visible and properly styled on all pages */
