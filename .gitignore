@@ -1,3 +1,8 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
 # Node dependencies
 node_modules/
 **/node_modules/
@@ -12,7 +17,7 @@ node_modules/
 build/
 dist/
 out/
-docs/_site/   # if your docs build output is here
+site/         # MkDocs build output
 
 # Logs
 npm-debug.log*
