@@ -38,14 +38,11 @@ theme:
     - content.code.annotate
     - content.code.copy
     - content.tooltips
-    - navigation.expand
     - navigation.footer
     - navigation.indexes
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.progress
-    - navigation.path
-    - navigation.sections
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
@@ -53,7 +50,7 @@ theme:
     - search.highlight
     - search.share
     - search.suggest
-    - toc.follow
+    - toc.integrate
 
 markdown_extensions:
   - abbr
