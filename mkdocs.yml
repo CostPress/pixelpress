@@ -33,8 +33,6 @@ theme:
     repo: fontawesome/brands/github
   features:
     - announce.dismiss
-    - content.action.edit
-    - content.action.view
     - content.code.annotate
     - content.code.copy
     - content.tooltips
@@ -50,7 +48,6 @@ theme:
     - search.highlight
     - search.share
     - search.suggest
-    - toc.integrate
 
 markdown_extensions:
   - abbr

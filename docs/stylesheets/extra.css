@@ -133,3 +133,25 @@ a {
 .md-sidebar--secondary {
   right: 0;
 }
+
+/* Ensure TOC is visible and properly styled on all pages */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--secondary {
+    display: block;
+    margin-left: 0;
+  }
+}
+
+/* Better TOC styling */
+.md-nav__link--active {
+  font-weight: 600;
+  color: var(--md-accent-fg-color);
+}
+
+.md-nav--secondary .md-nav__list {
+  padding: 0.5rem 0;
+}
+
+.md-nav--secondary .md-nav__item {
+  padding: 0.25rem 0;
+}
