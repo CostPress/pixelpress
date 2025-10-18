@@ -10,6 +10,10 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
     name: Deploy to GitHub Pages
@@ -19,10 +23,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
@@ -32,9 +36,6 @@ jobs:
         run: npm ci
         working-directory: ./docs
 
-      - name: Check for package-lock.json
-        run: ls -l docs/package-lock.json
-        
       - name: Build documentation site
         run: npm run build
         working-directory: ./docs
