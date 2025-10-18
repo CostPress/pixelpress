@@ -21,6 +21,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,18 +33,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: docs/package-lock.json
+          # remove cache settings:
+          # cache: 'npm'
+          # cache-dependency-path: docs/package-lock.json
 
       - name: Install dependencies
+        working-directory: docs
         run: npm ci
-        working-directory: ./docs
 
       - name: Build documentation site
+        working-directory: docs
         run: npm run build
-        working-directory: ./docs
 
-      - name: Setup Pages
+      - name: Configure Pages
         uses: actions/configure-pages@v3
 
       - name: Upload artifact
