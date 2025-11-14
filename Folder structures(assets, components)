@@ -1,0 +1,42 @@
+project-root/
+│
+├── public/                  # Public files (index.html, favicon, etc.)
+│
+├── src/                     # Source files
+│   ├── assets/              # Images, fonts, icons, etc.
+│   │   ├── images/
+│   │   ├── fonts/
+│   │   └── icons/
+│   │
+│   ├── components/          # Reusable UI components
+│   │   ├── Header/
+│   │   │   ├── Header.jsx
+│   │   │   └── Header.css
+│   │   ├── Footer/
+│   │   └── Button/
+│   │
+│   ├── pages/               # Page components (if using React Router, etc.)
+│   │   ├── Home.jsx
+│   │   └── About.jsx
+│   │
+│   ├── services/            # API calls or business logic
+│   │   └── api.js
+│   │
+│   ├── context/             # React context or global state
+│   │   └── AuthContext.js
+│   │
+│   ├── hooks/               # Custom React hooks
+│   │   └── useAuth.js
+│   │
+│   ├── utils/               # Helper functions
+│   │   └── formatDate.js
+│   │
+│   ├── styles/              # Global styles
+│   │   └── main.css
+│   │
+│   ├── App.jsx              # Main app component
+│   └── index.js             # Entry point
+│
+├── .gitignore
+├── package.json
+└── README.md
