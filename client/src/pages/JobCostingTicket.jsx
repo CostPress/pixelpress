@@ -5,17 +5,18 @@ const COLORS = {
   sheet: "#FFFFFF",
   ink: "#1C1B18",
   slate: "#8A8374",
-  line: "#F5F5DC",
+  line: "#E0DACB",
   cyan: "#0093C9",
-  pixelpress: "#166534",
   magenta: "#D31670",
   yellow: "#C99400",
   danger: "#B4432E",
 };
 
 const CURRENCIES = [
+  { code: "USD", label: "$ USD" },
   { code: "XAF", label: "FCFA XAF" },
-
+  { code: "EUR", label: "€ EUR" },
+  { code: "GBP", label: "£ GBP" },
 ];
 
 function formatMoney(value, code) {
@@ -50,7 +51,7 @@ const RegMark = ({ color = COLORS.ink, size = 16 }) => (
   </svg>
 );
 
-function Field({ label, hint, tooltip, children }) {
+function Field({ label, hint, children }) {
   return (
     <label style={{ display: "block" }}>
       <div
@@ -65,12 +66,6 @@ function Field({ label, hint, tooltip, children }) {
         }}
       >
         {label}
-        {tooltip && (
-          <span title={tooltip} style={{ cursor: "help", color: COLORS.slate, fontSize: 12 }}>
-            ⓘ
-          </span>
-        )}
-        
       </div>
       {children}
       {hint && (
@@ -246,120 +241,77 @@ export default function JobCostingTicket() {
 
   const [jobName, setJobName] = useState("");
   const [client, setClient] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(1000);
   const [finishedSize, setFinishedSize] = useState("");
-  const [currency, setCurrency] = useState("FRS");
-  const [isRectoVerso, setIsRectoVerso] = useState(false);
+  const [currency, setCurrency] = useState("USD");
 
   const [paperStock, setPaperStock] = useState("Uncoated bond");
-  const [paperGrammage, setpaperGrammage] = useState(80);
-  const [priceperream, setpriceperream] = useState("");
-   const [sheetsPerReam, setSheetsPerReam] = useState("");
-  const [sheetsNeeded, setSheetsNeeded] = useState("");
-  const [spoilagePercent, setSpoilagePercent] = useState("");
-  const [finalNumOnReam, setfinalNumOnReam] = useState("");
+  const [paperWeight, setPaperWeight] = useState(80);
+  const [costPerSheet, setCostPerSheet] = useState(0.05);
+  const [sheetsNeeded, setSheetsNeeded] = useState(1100);
+  const [spoilagePercent, setSpoilagePercent] = useState(5);
 
-  const [numColors, setNumColors] = useState("");
-  const [costPerPlate, setCostPerPlate] = useState("");
-  const [numPlates, setNumPlates] = useState("");
-  const [plateSize, setplateSize] = useState("");
+  const [numColors, setNumColors] = useState(4);
+  const [costPerPlate, setCostPerPlate] = useState(8);
+  const [numPlates, setNumPlates] = useState(4);
+  const [inkCostPerColor, setInkCostPerColor] = useState(12);
   const [coveragePercent, setCoveragePercent] = useState(80);
 
-  const [priceImpression, setpriceImpression] = useState("");
-  const [finalNumOnCutting, setfinalNumOnCutting] = useState("");
-  const [runningSpeed, setRunningSpeed] = useState("");
-  const [laborRate, setLaborRate] = useState("");
-  const [numOperators, setNumOperators] = useState("");
-  const [colorSeparationprice, setcolorSeparationprice] = useState("");
+  const [pressHourlyRate, setPressHourlyRate] = useState(25);
+  const [makereadyHours, setMakereadyHours] = useState(0.5);
+  const [runningSpeed, setRunningSpeed] = useState(3000);
+  const [laborRate, setLaborRate] = useState(8);
+  const [numOperators, setNumOperators] = useState(1);
 
-  const [bindingUnitPrice, setBindingUnitPrice] = useState("");
-  const [laminationUnitPrice, setLaminationUnitPrice] = useState("");
+  const [overheadPercent, setOverheadPercent] = useState(15);
+  const [marginPercent, setMarginPercent] = useState(20);
 
-  const resetAll = () => {
-  setJobName("");
-  setClient("");
-  setQuantity("");
-  setFinishedSize("");
-
-  setCurrency("XAF");
-
-  setPaperStock("");
-  setpaperGrammage("");
-  setpriceperream("");
-  setSheetsPerReam("");
-  setSheetsNeeded("");
-  setSpoilagePercent("");
-  setfinalNumOnReam("");
-
-  setNumColors("");
-  setCostPerPlate("");
-  setNumPlates("");
-  setplateSize("");
-  setCoveragePercent("");
-
-  setpriceImpression("");
-  setfinalNumOnCutting("");
-  setRunningSpeed("");
-  setLaborRate("");
-  setNumOperators("");
-  setIsRectoVerso(false);
-
-  setcolorSeparationprice("");
-  setBindingUnitPrice("");
-  setLaminationUnitPrice("");
-};
-
-  function computeCalc() {
-    const sidesMultiplier = isRectoVerso ? 2 : 1;
-    const sheetsNeeded = quantity / num(finalNumOnReam);
-    const impressionNum = quantity / num(finalNumOnCutting) * sidesMultiplier;
+  const calc = useMemo(() => {
     const totalSheets = num(sheetsNeeded) * (1 + num(spoilagePercent) / 100);
-    const totalReams = Math.round(totalSheets / num(sheetsPerReam));
-    const leftoverReams = totalSheets % num(sheetsPerReam);
-    const bindingTotal = num(bindingUnitPrice) * quantity;
-    const laminationTotal = num(laminationUnitPrice * quantity);
-    const rawPaperCost = quantity / (num(finalNumOnReam) * num(sheetsPerReam)) * num(priceperream);
-    const paperCost = rawPaperCost * (1 + num(spoilagePercent) / 100) + bindingTotal + laminationTotal;
-    const plateCost = num(numColors) * num(costPerPlate);
+    const paperCost = totalSheets * num(costPerSheet);
+    const plateCost = num(numPlates) * num(costPerPlate);
+    const inkCost =
+      num(numColors) * num(inkCostPerColor) * (num(coveragePercent) / 100);
     const speed = num(runningSpeed) > 0 ? num(runningSpeed) : 1;
-    const impCost = (num(quantity) / num(finalNumOnCutting)) * num(numColors) * num(priceImpression) * sidesMultiplier;
-    const colorSeparationCost = num(colorSeparationprice) * numColors * sidesMultiplier;
-    const subtotal = paperCost + plateCost + impCost + colorSeparationCost;
-               const qty = num(quantity) > 0 ? num(quantity) : 1;
-    const perUnit = subtotal / qty;
-
+    const pressTimeHours = num(makereadyHours) + totalSheets / speed;
+    const pressCost = pressTimeHours * num(pressHourlyRate);
+    const laborCost = pressTimeHours * num(laborRate) * num(numOperators);
+    const subtotal = paperCost + plateCost + inkCost + pressCost + laborCost;
+    const overheadAmt = subtotal * (num(overheadPercent) / 100);
+    const marginAmt = (subtotal + overheadAmt) * (num(marginPercent) / 100);
+    const total = subtotal + overheadAmt + marginAmt;
+    const qty = num(quantity) > 0 ? num(quantity) : 1;
+    const perUnit = total / qty;
     return {
       totalSheets,
-      numPlates,
       paperCost,
-      totalReams,
       plateCost,
-      leftoverReams,
-      impressionNum,
-      laminationTotal,
-      bindingTotal,
-      impCost,
-      colorSeparationCost,
+      inkCost,
+      pressTimeHours,
+      pressCost,
+      laborCost,
       subtotal,
+      overheadAmt,
+      marginAmt,
+      total,
       perUnit,
     };
-  }
-  const calc = computeCalc();
-([
+  }, [
     sheetsNeeded,
     spoilagePercent,
-    priceperream,
-    sheetsPerReam,
+    costPerSheet,
+    numPlates,
     costPerPlate,
     numColors,
-    plateSize,
+    inkCostPerColor,
     coveragePercent,
     runningSpeed,
-    finalNumOnCutting,
-    finalNumOnReam,
-    priceImpression,
+    makereadyHours,
+    pressHourlyRate,
     laborRate,
     numOperators,
+    overheadPercent,
+    marginPercent,
     quantity,
   ]);
 
@@ -402,24 +354,6 @@ export default function JobCostingTicket() {
                 marginBottom: 4,
               }}
             >
-              <button
-  onClick={resetAll}
-  style={{
-    padding: "8px 14px",
-    background: COLORS.danger,
-    color: "#FFFFFF",
-    border: "none",
-    borderRadius: 4,
-    fontFamily: "'Inter', sans-serif",
-    fontSize: 12,
-    fontWeight: 600,
-    cursor: "pointer",
-    textTransform: "uppercase",
-    letterSpacing: "0.04em",
-  }}
->
-  Reset
-</button>
               <RegMark color={COLORS.ink} size={22} />
               <h1
                 style={{
@@ -427,9 +361,9 @@ export default function JobCostingTicket() {
                   fontFamily: "'Barlow Condensed', sans-serif",
                   fontWeight: 700,
                   fontSize: 34,
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.03em",
                   textTransform: "uppercase",
-                  color: COLORS.pixelpress,
+                  color: COLORS.ink,
                 }}
               >
                 PixelPress
@@ -516,7 +450,7 @@ export default function JobCostingTicket() {
         >
           {/* Main form column */}
           <div style={{ minWidth: 0 }}>
-            <Section title="Job details" accent={COLORS.pixelpress}>
+            <Section number="01" title="Job details" accent={COLORS.ink}>
               <Field label="Job name">
                 <TextInput
                   placeholder="Flyer reprint — Q3 promo"
@@ -546,204 +480,44 @@ export default function JobCostingTicket() {
                 />
               </Field>
             </Section>
-          <Section number="01" title="Colour Separation" accent={COLORS.cyan}>
-              <Field label="COLOUR SEPARATION SIZE" hint="size of films to be mounted">
-              <SelectInput
-                  value={plateSize}
-                  onChange={(e) => setplateSize(e.target.value)}
-                >
-                <option>A3</option>
-                <option>A2</option>
-              </SelectInput>
-              </Field>
-              <Field label="NUMBER OF COLOURS" hint="Printing Ink">
-                <NumberInput
-                  min="1"
-                  max="4"
-                  value={numColors}
-                  onChange={(e) => setNumColors(e.target.value)}
-                />
-              </Field>
-               <Field label="Unit Price" hint="per colour">
-                <NumberInput
-                min="0"
-                step="1000"
-                  value={colorSeparationprice}
-                  onChange={(e) => setcolorSeparationprice(e.target.value)}
-                  
-                />
-              </Field>
-            </Section>
 
-               <Section number="02" title="Impression" accent={COLORS.magenta}>
-              <Field label="Impression U.P" hint="impression per copy">
-                <NumberInput
-                  min="4"
-                  step="1"
-                  value={priceImpression}
-                  onChange={(e) => setpriceImpression(e.target.value)}
-                />
-              </Field>
-              <Field label="Number of final on plate size" hint="Cutting size is print plate size">
-                <SelectInput
-                  value={finalNumOnCutting}
-                  onChange={(e) => setfinalNumOnCutting(e.target.value)}
-                  >
-                <option>1</option>
-                <option>2</option>
-                <option>4</option>
-                <option>8</option>
-                <option>16</option>
-                <option>32</option>
-                </SelectInput>
-              </Field>
-              <Field label="Running speed" hint="Sheets per hour">
-                <NumberInput
-                  min="1"
-                  value={runningSpeed}
-                  onChange={(e) => setRunningSpeed(e.target.value)}
-                />
-              </Field>
-              <Field label="Print side" hint="Recto or recto-verso">
-  <div
-    style={{
-      display: "inline-flex",
-      border: `1px solid ${COLORS.line}`,
-      borderRadius: 4,
-      padding: 3,
-      background: COLORS.paper,
-    }}
-  >
-    <button
-      type="button"
-      onClick={() => setIsRectoVerso(false)}
-      style={{
-        padding: "7px 14px",
-        border: "none",
-        borderRadius: 3,
-        fontFamily: "'Inter', sans-serif",
-        fontSize: 13,
-        fontWeight: 600,
-        cursor: "pointer",
-        background: !isRectoVerso ? COLORS.magenta : "transparent",
-        color: !isRectoVerso ? "#FFFFFF" : COLORS.slate,
-        transition: "all 0.15s",
-      }}
-    >
-      Recto
-    </button>
-    <button
-      type="button"
-      onClick={() => setIsRectoVerso(true)}
-      style={{
-        padding: "7px 14px",
-        border: "none",
-        borderRadius: 3,
-        fontFamily: "'Inter', sans-serif",
-        fontSize: 13,
-        fontWeight: 600,
-        cursor: "pointer",
-        background: isRectoVerso ? COLORS.magenta : "transparent",
-        color: isRectoVerso ? "#FFFFFF" : COLORS.slate,
-        transition: "all 0.15s",
-      }}
-    >
-      Recto-verso
-    </button>
-  </div>
-</Field>
-              <Field label="Operators">
-                <NumberInput
-                  min="0"
-                  value={numOperators}
-                  onChange={(e) => setNumOperators(e.target.value)}
-                />
-              </Field>
-
-            </Section>
-
-            <Section number="03" title="plates" accent={COLORS.yellow}>
-              <Field label="Colors" hint="e.g. 4 for CMYK">
-                <NumberInput
-                  min="1"
-                  max="5"
-                  value={numColors}
-                  onChange={(e) => setNumColors(e.target.value)}
-                />
-              </Field>
-              <Field label="Plates" hint="Colors × sides">
-                <NumberInput
-                  min="0"
-                  value={numColors}
-                  onChange={(e) => setNumColors(e.target.value)}
-                />
-              </Field>
-              <Field label="Cost per plate">
-                <NumberInput
-                  min="1000"
-                  step="500"
-                  value={costPerPlate}
-                  onChange={(e) => setCostPerPlate(e.target.value)}
-                />
-              </Field>
-              <Field label="Plate Size" hint="A3, A2">
-                <SelectInput
-                  value={plateSize} readOnly>
-                <option>A3</option>
-                <option>A2</option>
-              </SelectInput>
-              </Field>
-            </Section>
-
-            <Section number="04" title="Paper" accent={COLORS.ink}>
+            <Section number="02" title="Paper" accent={COLORS.yellow}>
               <Field label="Paper stock">
                 <SelectInput
                   value={paperStock}
                   onChange={(e) => setPaperStock(e.target.value)}
                 >
-                  <option>Offset</option>
-                  <option>Glossy art</option>
-                  <option>Satine art</option>
-                  <option>Bristol stock</option>
-                  <option>Cardboard</option>
+                  <option>Uncoated bond</option>
+                  <option>Gloss art</option>
+                  <option>Matte art</option>
+                  <option>Card stock</option>
+                  <option>Recycled</option>
                   <option>Newsprint</option>
-                  <option>Grayboard</option>
-                  <option>Autocopiant</option>
                 </SelectInput>
               </Field>
               <Field label="Weight (gsm)">
                 <NumberInput
                   min="0"
-                  value={paperGrammage}
-                  onChange={(e) => setpaperGrammage(e.target.value)}
+                  value={paperWeight}
+                  onChange={(e) => setPaperWeight(e.target.value)}
                 />
               </Field>
-              <Field label="price per ream" hint={CURRENCIES.find(c=>c.code===currency)?.label}>
+              <Field label="Cost per sheet" hint={CURRENCIES.find(c=>c.code===currency)?.label}>
                 <NumberInput
                   min="0"
-                  step="1000"
-                  value={priceperream}
-                  onChange={(e) => setpriceperream(e.target.value)}
+                  step="0.01"
+                  value={costPerSheet}
+                  onChange={(e) => setCostPerSheet(e.target.value)}
                 />
               </Field>
-              <Field label="PAPER CONDITIONING" hint="Number of sheets per ream">
+              <Field label="Sheets required" hint="Before spoilage">
                 <NumberInput
                   min="0"
-                  step="50"
-                    value={sheetsPerReam}
-                    onChange={(e) => setSheetsPerReam(e.target.value)}
+                  value={sheetsNeeded}
+                  onChange={(e) => setSheetsNeeded(e.target.value)}
                 />
               </Field>
-              <Field label="Number of final on cutting size" hint="Number of times it comes out on ream size">
-                <NumberInput
-                  min="1"
-                  max="10"
-                  step="1"
-                  value={finalNumOnReam}
-                  onChange={(e) => setfinalNumOnReam(e.target.value)}
-                />
-              </Field>
-              <Field label="Spoilage" tooltip="Extra paper allowance to cover printing errors, misprints, and setup waste">
+              <Field label="Spoilage" hint="Wastage allowance">
                 <NumberInput
                   min="0"
                   max="100"
@@ -753,18 +527,101 @@ export default function JobCostingTicket() {
               </Field>
             </Section>
 
-            <Section  title="Others" accent={COLORS.slate}>
-              <Field label="Binding Unit Price" hint="Binding; Stapling, Gluing">
+            <Section number="03" title="Ink & plates" accent={COLORS.cyan}>
+              <Field label="Colors" hint="e.g. 4 for CMYK">
                 <NumberInput
-                value={bindingUnitPrice}
-               onChange={(e) => setBindingUnitPrice(e.target.value)}
+                  min="0"
+                  value={numColors}
+                  onChange={(e) => setNumColors(e.target.value)}
                 />
               </Field>
-              <Field label="Lamination Unit Price" hint="Lamination; Gloss, Matte">
+              <Field label="Plates" hint="Colors × sides">
                 <NumberInput
-                step="10"
-                value={laminationUnitPrice}
-                onChange={(e) => setLaminationUnitPrice(e.target.value)}
+                  min="0"
+                  value={numPlates}
+                  onChange={(e) => setNumPlates(e.target.value)}
+                />
+              </Field>
+              <Field label="Cost per plate">
+                <NumberInput
+                  min="0"
+                  step="0.01"
+                  value={costPerPlate}
+                  onChange={(e) => setCostPerPlate(e.target.value)}
+                />
+              </Field>
+              <Field label="Ink cost per color" hint="Flat, per job">
+                <NumberInput
+                  min="0"
+                  step="0.01"
+                  value={inkCostPerColor}
+                  onChange={(e) => setInkCostPerColor(e.target.value)}
+                />
+              </Field>
+              <Field label="Coverage" hint="Estimated ink coverage">
+                <NumberInput
+                  min="0"
+                  max="100"
+                  value={coveragePercent}
+                  onChange={(e) => setCoveragePercent(e.target.value)}
+                />
+              </Field>
+            </Section>
+
+            <Section number="04" title="Press & labor" accent={COLORS.magenta}>
+              <Field label="Press rate" hint="Per hour">
+                <NumberInput
+                  min="0"
+                  step="0.01"
+                  value={pressHourlyRate}
+                  onChange={(e) => setPressHourlyRate(e.target.value)}
+                />
+              </Field>
+              <Field label="Makeready time" hint="Hours">
+                <NumberInput
+                  min="0"
+                  step="0.1"
+                  value={makereadyHours}
+                  onChange={(e) => setMakereadyHours(e.target.value)}
+                />
+              </Field>
+              <Field label="Running speed" hint="Sheets per hour">
+                <NumberInput
+                  min="1"
+                  value={runningSpeed}
+                  onChange={(e) => setRunningSpeed(e.target.value)}
+                />
+              </Field>
+              <Field label="Labor rate" hint="Per operator, per hour">
+                <NumberInput
+                  min="0"
+                  step="0.01"
+                  value={laborRate}
+                  onChange={(e) => setLaborRate(e.target.value)}
+                />
+              </Field>
+              <Field label="Operators">
+                <NumberInput
+                  min="0"
+                  value={numOperators}
+                  onChange={(e) => setNumOperators(e.target.value)}
+                />
+              </Field>
+            </Section>
+
+            <Section number="05" title="Overhead & margin" accent={COLORS.slate}>
+              <Field label="Overhead" hint="% of subtotal">
+                <NumberInput
+                  min="0"
+                  value={overheadPercent}
+                  onChange={(e) => setOverheadPercent(e.target.value)}
+                />
+              </Field>
+              <Field label="Margin" hint="% added on top">
+                <NumberInput
+                  min="0"
+                  value={marginPercent}
+                  onChange={(e) => setMarginPercent(e.target.value)}
                 />
               </Field>
             </Section>
@@ -810,17 +667,27 @@ export default function JobCostingTicket() {
             </div>
 
             <div style={{ padding: "14px 20px 6px" }}>
-              <LedgerRow label="Colour Separation" value={calc.colorSeparationCost} currency={currency} muted />
-              <LedgerRow label="Impression" value={calc.impCost} currency={currency} muted />
-              <LedgerRow label="Plates" value={calc.plateCost} currency={currency} muted />
               <LedgerRow label="Paper" value={calc.paperCost} currency={currency} muted />
-              
-
+              <LedgerRow label="Plates" value={calc.plateCost} currency={currency} muted />
+              <LedgerRow label="Ink" value={calc.inkCost} currency={currency} muted />
+              <LedgerRow label="Press time" value={calc.pressCost} currency={currency} muted />
+              <LedgerRow label="Labor" value={calc.laborCost} currency={currency} muted />
             </div>
 
             <div style={{ padding: "6px 20px", borderTop: `1px solid ${COLORS.line}` }}>
               <LedgerRow label="Subtotal" value={calc.subtotal} currency={currency} strong />
-           
+              <LedgerRow
+                label={`Overhead (${num(overheadPercent)}%)`}
+                value={calc.overheadAmt}
+                currency={currency}
+                muted
+              />
+              <LedgerRow
+                label={`Margin (${num(marginPercent)}%)`}
+                value={calc.marginAmt}
+                currency={currency}
+                muted
+              />
             </div>
 
             <div
@@ -849,7 +716,7 @@ export default function JobCostingTicket() {
                     color: COLORS.ink,
                   }}
                 >
-                job Requirements
+                  Total price
                 </span>
                 <span
                   style={{
@@ -859,6 +726,7 @@ export default function JobCostingTicket() {
                     color: COLORS.ink,
                   }}
                 >
+                  {formatMoney(calc.total, currency)}
                 </span>
               </div>
               <div
@@ -885,37 +753,7 @@ export default function JobCostingTicket() {
                   marginTop: 4,
                 }}
               >
-                <span>Total Plates</span>
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                  {Math.ceil(calc.numPlates).toLocaleString()}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 15,
-                  color: COLORS.slate,
-                  marginTop: 4,
-                }}
-              >
-                <span>Total Reams</span>
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                  {`${calc.totalReams} reams + ${calc.leftoverReams} sheets`}
-                </span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 13,
-                  color: COLORS.slate,
-                  marginTop: 4,
-                }}
-              >
-                <span>Total Sheets</span>
+                <span>Total sheets</span>
                 <span style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                   {Math.ceil(calc.totalSheets).toLocaleString()}
                 </span>
@@ -930,9 +768,9 @@ export default function JobCostingTicket() {
                   marginTop: 4,
                 }}
               >
-                <span>Number of Impressions</span>
+                <span>Press time</span>
                 <span style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                  {Math.ceil(calc.impressionNum).toLocaleString()} imp
+                  {calc.pressTimeHours.toFixed(2)} hrs
                 </span>
               </div>
             </div>

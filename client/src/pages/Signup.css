@@ -2,3 +2,15 @@
   background: hsl(16, 96%, 51%);
   color: "white",
 }
+
+.signup-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.signup-logo img {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+}

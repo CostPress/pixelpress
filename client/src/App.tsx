@@ -5,6 +5,10 @@ import Menu from './pages/Menu';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Signup from './pages/Signup';
+import JobCostingTicket from "./pages/JobCostingTicket";
+
+// inside your routes or just temporarily as the main render:
+<JobCostingTicket />
 
 function App() {
   return (
