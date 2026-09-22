@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import {
   testServerConnection,
@@ -6,6 +7,7 @@ import {
 import logo from "../assets/FLAVEA.png";
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -76,9 +78,10 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       password: "",
       confirmPassword: "",
     });
-
+  navigate("/");
     console.log("Signup successful:", data);
-  } catch (error) {
+  } 
+  catch (error) {
     console.error("Signup error:", error);
 
     if (error instanceof Error) {
@@ -134,24 +137,24 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             marginBottom: "30px",
           }}
         >
-          <h1
+          <b><h1
             style={{
               margin: "0 0 10px",
-              color: "#172554",
+              color: "#166534",
               fontSize: "30px",
             }}
           >
             Create Your Account
-          </h1>
+          </h1></b>
 
           <p
             style={{
               margin: 0,
-              color: "#fc7a00",
+              color: "#000000",
               fontSize: "15px",
             }}
           >
-            Join FLAVEA and get started today.
+            Join PixelPress and get started today.
           </p>
         </div>
 
@@ -322,7 +325,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               padding: "14px",
               border: "none",
               borderRadius: "8px",
-              backgroundColor: loading ? "#93c5fd" : "#2563eb",
+              backgroundColor: loading ? "#bef5d3" : "#166534",
               color: "#ffffff",
               fontSize: "16px",
               fontWeight: "600",
@@ -345,7 +348,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           <a
             href="/login"
             style={{
-              color: "#2563eb",
+              color: "#166534",
               fontWeight: "600",
               textDecoration: "none",
             }}

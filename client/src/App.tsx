@@ -1,26 +1,41 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import About from './pages/About';
-import Contact from './pages/Contact';
+import Reports from './pages/Reports';
 import Signup from './pages/Signup';
-import JobCostingTicket from "./pages/JobCostingTicket";
+import History from './pages/History';
+import ProductSelector from './pages/ProductSelector';
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
 
-// inside your routes or just temporarily as the main render:
-<JobCostingTicket />
+
+function TicketWrapper() {
+  const { productType } = useParams<{ productType: string }>();
+  return <Home productType={productType} />;
+}
 
 function App() {
   return (
     <BrowserRouter>
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/signup" element={<Signup />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          {/* Public */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/signup" element={<Signup />} />
+          
+          {/* Protected */}
+          <Route element={<ProtectedRoute />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<ProductSelector />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/ticket/:productType" element={<TicketWrapper />} />
+          <Route path="/history" element={<History />} />
+        </Route>
+        </Routes>
       </Layout>
     </BrowserRouter>
   );

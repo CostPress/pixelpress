@@ -9,7 +9,7 @@ const PORT = 5000;
 // Allow requests from the React frontend
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5173"
   })
 );
 
